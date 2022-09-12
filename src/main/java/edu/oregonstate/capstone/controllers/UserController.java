@@ -1,22 +1,20 @@
 package edu.oregonstate.capstone.controllers;
 
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
-import com.amazonaws.services.cognitoidp.model.AuthFlowType;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.models.LoginRequest;
+import edu.oregonstate.capstone.models.SignupRequest;
 import edu.oregonstate.capstone.models.Secret;
 import edu.oregonstate.capstone.security.SecretManager;
 import edu.oregonstate.capstone.services.UserService;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,8 +23,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    private AWSCognitoIdentityProvider cognitoClient;
+    private final String cognitoUrl = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_Xef2qmwBv";
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> get(@PathVariable("id") Long id) {
@@ -40,23 +37,30 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) throws JsonProcessingException {
+    @PostMapping("/users/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
 
-        String loginResponse;
         HttpStatus httpStatus = HttpStatus.OK;
+        String loginResponse;
 
         try {
             Secret secret = SecretManager.getSecret();
 
-            AdminInitiateAuthRequest request = new AdminInitiateAuthRequest()
-                    .withUserPoolId(secret.getUserPoolId())
-                    .withClientId(secret.getAppClientId())
-                    .withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
-                    .withAuthParameters(getAuthParams(loginRequest));
+            JSONObject authParams = new JSONObject();
+            authParams.put("USERNAME", loginRequest.getUsername());
+            authParams.put("PASSWORD", loginRequest.getPassword());
 
-            AdminInitiateAuthResult result = cognitoClient.adminInitiateAuth(request);
-            loginResponse = result.getAuthenticationResult().getIdToken();
+            JSONObject body = new JSONObject();
+            body.put("AuthParameters", authParams);
+            body.put("ClientId", secret.getAppClientId());
+            body.put("AuthFlow", "USER_PASSWORD_AUTH");
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-amz-json-1.1");
+            headers.set("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth");
+            HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
+            loginResponse = restTemplate.postForObject(cognitoUrl, entity, String.class);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             loginResponse = e.getMessage();
@@ -66,10 +70,41 @@ public class UserController {
         return new ResponseEntity<>(loginResponse, httpStatus);
     }
 
-    private Map<String, String> getAuthParams(LoginRequest loginRequest) {
-        Map<String, String> authParams = new HashMap<>();
-        authParams.put("USERNAME", loginRequest.getUsername());
-        authParams.put("PASSWORD", loginRequest.getPassword());
-        return authParams;
+    @PostMapping("/users/signup")
+    public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        String signupResponse;
+
+        try {
+            Secret secret = SecretManager.getSecret();
+
+            JSONArray userAttributes = new JSONArray();
+            JSONObject emailAttribute = new JSONObject();
+            emailAttribute.put("Name", "email");
+            emailAttribute.put("Value", signupRequest.getEmail());
+            userAttributes.put(emailAttribute);
+
+            JSONObject body = new JSONObject();
+            body.put("UserAttributes", userAttributes);
+            body.put("ClientId", secret.getAppClientId());
+            body.put("Username", signupRequest.getUsername());
+            body.put("Password", signupRequest.getPassword());
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-amz-json-1.1");
+            headers.set("X-Amz-Target", "AWSCognitoIdentityProviderService.SignUp");
+            signupResponse = restTemplate.postForObject(cognitoUrl,
+                    new HttpEntity<>(body.toString(), headers),
+                    String.class);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            signupResponse = e.getMessage();
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
+        return new ResponseEntity<>(signupResponse, httpStatus);
     }
 }

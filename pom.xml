@@ -33,18 +33,18 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Cognito -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-cognitoidp</artifactId>
-            <version>1.12.225</version>
-        </dependency>
-
         <!-- Secrets Manager -->
         <dependency>
             <groupId>com.amazonaws.secretsmanager</groupId>
             <artifactId>aws-secretsmanager-caching-java</artifactId>
             <version>1.0.2</version>
+        </dependency>
+
+        <!-- JSON -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220320</version>
         </dependency>
 
         <dependency>
