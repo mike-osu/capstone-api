@@ -1,5 +1,7 @@
 package edu.oregonstate.capstone.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,9 +19,11 @@ public class User {
     private String email;
 
     @Column(columnDefinition="text")
+    @JsonIgnore
     private String idToken;
 
     @Column(columnDefinition="text")
+    @JsonIgnore
     private String accessToken;
 
     public Long getId() {
