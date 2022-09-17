@@ -3,6 +3,7 @@ package edu.oregonstate.capstone.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "t_user")
@@ -25,6 +26,10 @@ public class User {
     @Column(columnDefinition="text")
     @JsonIgnore
     private String accessToken;
+
+    @OneToMany(targetEntity = Experience.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Experience> experiences;
 
     public Long getId() {
         return id;
@@ -64,5 +69,13 @@ public class User {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public List<Experience> getExperiences() {
+        return experiences;
+    }
+
+    public void setExperiences(List<Experience> experiences) {
+        this.experiences = experiences;
     }
 }
