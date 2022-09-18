@@ -34,6 +34,12 @@ public class ExperienceController {
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
+    @GetMapping("/experiences/search")
+    public ResponseEntity<List<Experience>> searchByKeyword(@RequestParam("keyword") String keyword) {
+        List<Experience> experiences = experienceService.findByKeyword(keyword);
+        return new ResponseEntity<>(experiences, HttpStatus.OK);
+    }
+
     @PostMapping("/users/{userId}/experiences")
     public ResponseEntity<Experience> createExperience(@PathVariable(value = "userId") Long userId,
                                                        @RequestBody Experience experienceRequest) {

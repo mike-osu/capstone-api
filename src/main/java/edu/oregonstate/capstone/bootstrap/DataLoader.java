@@ -36,9 +36,18 @@ public class DataLoader implements CommandLineRunner {
         hawaii.setTitle("Aloha!");
         hawaii.setDescription("Trip to Hawaii");
         hawaii.setCity("Kaanapali");
-        hawaii.setState("HI");
+        hawaii.setState("Hawaii");
+        hawaii.setCountry("United States");
         hawaii.setUser(mike);
         experienceService.save(hawaii);
+
+        Experience europe = new Experience();
+        europe.setTitle("European Adventure");
+        europe.setDescription("Paris France, Brussels Belgium, Barcelona Spain, Amsterdam Netherlands, Munich Germany");
+        europe.setCity("London");
+        europe.setCountry("United Kingdom");
+        europe.setUser(mike);
+        experienceService.save(europe);
 
         System.out.println("Data loaded....");
     }
