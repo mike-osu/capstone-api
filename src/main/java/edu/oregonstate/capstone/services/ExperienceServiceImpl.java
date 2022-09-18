@@ -27,6 +27,11 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
+    public List<Experience> findByKeyword(String keyword) {
+        return experienceRepository.findByKeyword(keyword);
+    }
+
+    @Override
     public Experience save(Experience experience) {
 
         return experienceRepository.save(experience);
