@@ -30,23 +30,26 @@ public class ExperienceController {
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
         Experience experience = experienceService.findById(id);
+
+        if (experience == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
         return new ResponseEntity<>(experience, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get all experiences")
     @GetMapping("/experiences/all")
     public ResponseEntity<List<Experience>> getAll() {
+
         List<Experience> experiences = experienceService.getAll();
-        experiences.forEach((exp) -> {
-            double avgRating = ratingService.getAverageRating(exp.getId());
-            exp.setAverageRating(avgRating);
-        });
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Find experiences by keyword", notes = "http://{base_url}/experiences/search?keyword=europe")
     @GetMapping("/experiences/search")
     public ResponseEntity<List<Experience>> searchByKeyword(@RequestParam("keyword") String keyword) {
+
         List<Experience> experiences = experienceService.findByKeyword(keyword);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
