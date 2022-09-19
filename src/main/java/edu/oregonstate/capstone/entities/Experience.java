@@ -1,6 +1,7 @@
 package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 @Table(name = "t_experience")
 public class Experience {
 
+    @ApiModelProperty(hidden = true)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +28,7 @@ public class Experience {
     @ManyToOne
     private User user;
 
+    @ApiModelProperty(hidden = true)
     @Transient
     private String username;
 
