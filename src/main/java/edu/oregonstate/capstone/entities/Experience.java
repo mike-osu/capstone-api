@@ -2,6 +2,7 @@ package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 
@@ -33,6 +34,7 @@ public class Experience {
     @Transient
     private String username;
 
+    @Formula("(select coalesce(avg(r.star_count), 0.0) from t_rating r where r.experience_id = id)")
     private double averageRating;
 
     public Long getId() {

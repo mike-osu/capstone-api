@@ -28,7 +28,7 @@ public class RatingController {
     @Autowired
     UserService userService;
 
-    @ApiOperation(value = "Enter an experience rating for a user")
+    @ApiOperation(value = "Enter a user's rating for an experience")
     @PostMapping("/ratings/create")
     public ResponseEntity<String> createRating(@RequestBody Rating rating) {
 
@@ -41,6 +41,10 @@ public class RatingController {
             User user = userService.findById(rating.getUserId());
             if (user == null) {
                 return new ResponseEntity<>("user not found", HttpStatus.NOT_FOUND);
+            }
+
+            if (rating.getStarCount() < 0 || rating.getStarCount() > 5) {
+                return new ResponseEntity<>("invalid rating (must be between 1 and 5 inclusive)", HttpStatus.BAD_REQUEST);
             }
 
             ratingService.save(rating);
