@@ -1,9 +1,9 @@
 package edu.oregonstate.capstone.controllers;
 
-import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
+import edu.oregonstate.capstone.services.RatingService;
 import edu.oregonstate.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,9 @@ public class ExperienceController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RatingService ratingService;
+
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
@@ -34,6 +37,10 @@ public class ExperienceController {
     @GetMapping("/experiences/all")
     public ResponseEntity<List<Experience>> getAll() {
         List<Experience> experiences = experienceService.getAll();
+        experiences.forEach((exp) -> {
+            double avgRating = ratingService.getAverageRating(exp.getId());
+            exp.setAverageRating(avgRating);
+        });
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
