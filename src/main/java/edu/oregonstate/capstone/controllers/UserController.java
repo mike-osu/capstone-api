@@ -6,6 +6,7 @@ import edu.oregonstate.capstone.models.SignupRequest;
 import edu.oregonstate.capstone.models.Secret;
 import edu.oregonstate.capstone.security.SecretManager;
 import edu.oregonstate.capstone.services.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +28,28 @@ public class UserController {
 
     private final String cognitoUrl = "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_Xef2qmwBv";
 
+    @ApiOperation(value = "Get a user by id", notes = "http://{base_url}/users/1")
     @GetMapping("/users/{id}")
     public ResponseEntity<User> get(@PathVariable("id") Long id) {
         User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get a user by username", notes = "http://{base_url}/users?username=joeblow")
     @GetMapping("/users")
     public ResponseEntity<User> getByUsername(@RequestParam("username") String username) {
         User user = userService.findByUsername(username);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get all users")
     @GetMapping("/users/all")
     public ResponseEntity<List<User>> getAll() {
         List<User> users = userService.getAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Login a user")
     @PostMapping("/users/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
 
@@ -86,6 +91,7 @@ public class UserController {
         return new ResponseEntity<>(loginResponse, httpStatus);
     }
 
+    @ApiOperation(value = "Sign up a user")
     @PostMapping("/users/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
 
@@ -130,6 +136,7 @@ public class UserController {
         return new ResponseEntity<>(signupResponse, httpStatus);
     }
 
+    @ApiOperation(value = "Delete a user", notes = "only for development - http://{base_url}/users/delete?username=joeblow")
     @PostMapping("/users/delete")
     public ResponseEntity<String> deleteByUsername(@RequestParam("username") String username) {
 

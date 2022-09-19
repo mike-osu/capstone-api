@@ -5,6 +5,7 @@ import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
 import edu.oregonstate.capstone.services.UserService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +23,28 @@ public class ExperienceController {
     @Autowired
     UserService userService;
 
+    @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
         Experience experience = experienceService.findById(id);
         return new ResponseEntity<>(experience, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get all experiences")
     @GetMapping("/experiences/all")
     public ResponseEntity<List<Experience>> getAll() {
         List<Experience> experiences = experienceService.getAll();
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Find experiences by keyword", notes = "http://{base_url}/experiences/search?keyword=europe")
     @GetMapping("/experiences/search")
     public ResponseEntity<List<Experience>> searchByKeyword(@RequestParam("keyword") String keyword) {
         List<Experience> experiences = experienceService.findByKeyword(keyword);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Create an experience for a user")
     @PostMapping("/users/{userId}/experiences")
     public ResponseEntity<Experience> createExperience(@PathVariable(value = "userId") Long userId,
                                                        @RequestBody Experience experienceRequest) {
@@ -55,6 +60,7 @@ public class ExperienceController {
         return new ResponseEntity<>(experience, HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Update an experience")
     @PutMapping("/experiences/{id}")
     public ResponseEntity<Experience> updateExperience(@PathVariable(value = "id") Long id,
                                                        @RequestBody Experience experienceRequest) {
@@ -74,6 +80,7 @@ public class ExperienceController {
         return new ResponseEntity<>(experience, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Delete an experience by id", notes = "http://{base_url}/experiences/1")
     @DeleteMapping("/experiences/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public String delete(@PathVariable("id") Long id) {
