@@ -39,30 +39,30 @@ public class DataLoader implements CommandLineRunner {
 
         System.out.println("Users loaded....");
 
-        Experience hawaii = new Experience();
-        hawaii.setTitle("Aloha!");
-        hawaii.setDescription("Trip to Hawaii");
-        hawaii.setCity("Kaanapali");
-        hawaii.setState("Hawaii");
-        hawaii.setCountry("United States");
-        hawaii.setUser(mike);
-        experienceService.save(hawaii);
+        Experience exp1 = new Experience();
+        exp1.setTitle("Amsterdam Open Boat Canal Cruise - Live Guide - from Anne Frank House");
+        exp1.setDescription("Experience the beauty of Amsterdam’s canals by going on this scenic cruise. Pass by Anne Frank House, the Jordaan, the Houseboat Museum, Leiden Square, Rijksmuseum, De Duif and much more.");
+        exp1.setCity("Amsterdam");
+        exp1.setCountry("Netherlands");
+        exp1.setUser(mike);
+        experienceService.save(exp1);
 
-        Experience europe = new Experience();
-        europe.setTitle("European Adventure");
-        europe.setDescription("Paris France, Brussels Belgium, Barcelona Spain, Amsterdam Netherlands, Munich Germany");
-        europe.setCity("London");
-        europe.setCountry("United Kingdom");
-        europe.setUser(mike);
-        experienceService.save(europe);
+        Experience exp2 = new Experience();
+        exp2.setTitle("Dubai: Red Dunes Quad Bike, Sandsurf, Camels & BBQ at Al Khayma Camp");
+        exp2.setDescription("Experience several desert pursuits in one outing, including ATV-driving—something many tours only offer at an extra cost—on this red-dune desert tour from Dubai. Skip the hassle of transport and logistical planning; and be free to simply enjoy the dunes and activities provided. Zoom off on an ATV, ride a camel, go sandboarding; enjoy henna art and Arabian-costume photos; and conclude with a barbecue-buffet dinner and live shows.");
+        exp2.setCity("Dubai");
+        exp2.setCountry("United Arab Emirates");
+        exp2.setUser(mike);
+        experienceService.save(exp2);
 
-        Experience africa = new Experience();
-        africa.setTitle("Trip to Africa");
-        africa.setDescription("Africa abounds with incredible sights, from soaring sand dunes to savannas teeming with wildlife. Experience the many wonders on trips to Tanzania, South Africa, Botswana, Rwanda, Morocco, and more. Witness the annual wildebeest migration on safari in the Serengeti, or explore the sun-washed cities of Morocco through your camera lens. In South Africa, spot lions, elephants, giraffes, and more on a thrilling family safari. On many of our Africa expeditions, we arrange visits to National Geographic–sponsored research sites and talks with scientists in the field.");
-        africa.setCity("Serengeti");
-        africa.setCountry("Tanzania");
-        africa.setUser(joeblow);
-        experienceService.save(africa);
+        Experience exp3 = new Experience();
+        exp3.setTitle("Tour of North Shore and Sightseeing");
+        exp3.setDescription("Skip the hassle of renting a car and see the highlights of Oahu’s North Shore from the comfort of a minibus or van. Along the way, a guide keeps you entertained and shares details about the island that you would likely miss if traveling on your own. At each stop, you can enjoy free time to swim, shop, paddleboard/kayak or do an optional waterfall hike while getting to know the island.");
+        exp3.setCity("Haleiwa");
+        exp3.setState("Hawaii");
+        exp3.setCountry("United States");
+        exp3.setUser(joeblow);
+        experienceService.save(exp3);
 
         System.out.println("Experiences loaded....");
     }

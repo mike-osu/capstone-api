@@ -15,4 +15,14 @@ public class RatingServiceImpl implements RatingService {
     public Rating save(Rating rating) {
         return ratingRepository.save(rating);
     }
+
+    @Override
+    public Rating get(Long experienceId, Long userId) {
+
+        if (ratingRepository.findByUserIdAndExperienceId(userId, experienceId).isPresent()) {
+            return ratingRepository.findByUserIdAndExperienceId(userId, experienceId).get();
+        }
+
+        return null;
+    }
 }

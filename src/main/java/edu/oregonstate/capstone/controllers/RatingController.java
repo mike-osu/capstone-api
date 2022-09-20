@@ -10,10 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -27,6 +24,18 @@ public class RatingController {
 
     @Autowired
     UserService userService;
+
+    @ApiOperation(value = "Get a rating by userId and experienceId")
+    @GetMapping("/users/{userId}/experiences/{experienceId}/ratings")
+    public ResponseEntity<Integer> get(@PathVariable("userId") Long userId, @PathVariable("experienceId") Long experienceId) {
+
+        Rating rating = ratingService.get(userId, experienceId);
+        if (rating == null) {
+            return new ResponseEntity<>(0, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(rating.getStarCount(), HttpStatus.OK);
+    }
 
     @ApiOperation(value = "Enter a user's rating for an experience")
     @PostMapping("/ratings/create")
