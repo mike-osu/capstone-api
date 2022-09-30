@@ -19,7 +19,7 @@ public class SecretManager {
 
     public static Secret getSecret() throws JsonProcessingException {
 
-        String secretName = "languages-api-secret";
+        String secretName = "capstone-api-secret";
         String region = "us-west-2";
 
         // Create a Secrets Manager client
