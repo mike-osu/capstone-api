@@ -61,6 +61,14 @@ public class UserController {
             headers.set("X-Amz-Target", "AWSCognitoIdentityProviderService.InitiateAuth");
             HttpEntity<String> entity = new HttpEntity<>(body.toString(), headers);
             loginResponse = restTemplate.postForObject(cognitoUrl, entity, String.class);
+
+            // save user
+            User user = userService.findByUsername(loginRequest.getUsername());
+            JSONObject authResult = (new JSONObject(loginResponse)).getJSONObject("AuthenticationResult");
+            user.setAccessToken(authResult.get("AccessToken").toString());
+            user.setIdToken(authResult.get("IdToken").toString());
+            userService.save(user);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             loginResponse = e.getMessage();
@@ -99,6 +107,12 @@ public class UserController {
                     new HttpEntity<>(body.toString(), headers),
                     String.class);
 
+            // save user
+            User newUser = new User();
+            newUser.setEmail(signupRequest.getEmail());
+            newUser.setUsername(signupRequest.getUsername());
+            userService.save(newUser);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             signupResponse = e.getMessage();
@@ -106,5 +120,41 @@ public class UserController {
         }
 
         return new ResponseEntity<>(signupResponse, httpStatus);
+    }
+
+    @PostMapping("/users/delete")
+    public ResponseEntity<String> deleteByUsername(@RequestParam("username") String username) {
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        String deleteResponse;
+
+        try {
+            User user = userService.findByUsername(username);
+            if (user == null) {
+                return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
+            }
+
+            JSONObject body = new JSONObject();
+            body.put("AccessToken", user.getAccessToken());
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-amz-json-1.1");
+            headers.set("X-Amz-Target", "AWSCognitoIdentityProviderService.DeleteUser");
+            restTemplate.postForObject(cognitoUrl,
+                    new HttpEntity<>(body.toString(), headers),
+                    String.class);
+            deleteResponse = "Username '" + username + "' deleted";
+
+            // delete user
+            userService.delete(user.getId());
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            deleteResponse = e.getMessage();
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+
+        return new ResponseEntity<>(deleteResponse, httpStatus);
     }
 }
