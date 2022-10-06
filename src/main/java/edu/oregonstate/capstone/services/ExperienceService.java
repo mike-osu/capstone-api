@@ -10,6 +10,8 @@ public interface ExperienceService {
 
     List<Experience> getAll();
 
+    List<Experience> findByKeyword(String keyword);
+
     Experience save(Experience experience);
 
     void delete(Long id);
