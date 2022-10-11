@@ -31,6 +31,13 @@ public class User {
     @JoinColumn(name = "user_id")
     private List<Experience> experiences;
 
+    @PreRemove
+    public void checkUserAssociationBeforeRemoval() {
+        if (!this.experiences.isEmpty()) {
+            throw new RuntimeException("Can't remove a user that has experiences.");
+        }
+    }
+
     public Long getId() {
         return id;
     }

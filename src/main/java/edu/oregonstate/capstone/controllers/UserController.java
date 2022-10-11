@@ -149,6 +149,8 @@ public class UserController {
                 return new ResponseEntity<>("not found", HttpStatus.NOT_FOUND);
             }
 
+            user.checkUserAssociationBeforeRemoval();
+
             JSONObject body = new JSONObject();
             body.put("AccessToken", user.getAccessToken());
 

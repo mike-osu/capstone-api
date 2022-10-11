@@ -2,6 +2,7 @@ package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 
@@ -16,6 +17,7 @@ public class Experience {
 
     private String title;
 
+    @Column(columnDefinition="text")
     private String description;
 
     private String city;
@@ -31,6 +33,10 @@ public class Experience {
     @ApiModelProperty(hidden = true)
     @Transient
     private String username;
+
+    @ApiModelProperty(hidden = true)
+    @Formula("(select coalesce(avg(r.star_count), 0.0) from t_rating r where r.experience_id = id)")
+    private double averageRating;
 
     public Long getId() {
         return id;
@@ -94,5 +100,13 @@ public class Experience {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
     }
 }

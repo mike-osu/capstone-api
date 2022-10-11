@@ -1,9 +1,9 @@
 package edu.oregonstate.capstone.controllers;
 
-import com.amazonaws.services.secretsmanager.model.ResourceNotFoundException;
 import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
+import edu.oregonstate.capstone.services.RatingService;
 import edu.oregonstate.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +23,25 @@ public class ExperienceController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RatingService ratingService;
+
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
         Experience experience = experienceService.findById(id);
+
+        if (experience == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
         return new ResponseEntity<>(experience, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get all experiences")
     @GetMapping("/experiences/all")
     public ResponseEntity<List<Experience>> getAll() {
+
         List<Experience> experiences = experienceService.getAll();
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
@@ -40,6 +49,7 @@ public class ExperienceController {
     @ApiOperation(value = "Find experiences by keyword", notes = "http://{base_url}/experiences/search?keyword=europe")
     @GetMapping("/experiences/search")
     public ResponseEntity<List<Experience>> searchByKeyword(@RequestParam("keyword") String keyword) {
+
         List<Experience> experiences = experienceService.findByKeyword(keyword);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }

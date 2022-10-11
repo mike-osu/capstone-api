@@ -4,10 +4,20 @@ services:
 
   db:
     image: 'postgres:13.7-alpine'
-    container_name: capstone-db
+    container_name: capstone_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: Abc12345
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - AWS_ACCESS_KEY_ID=
+      - AWS_SECRET_ACCESS_KEY=
