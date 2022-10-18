@@ -5,6 +5,7 @@ import edu.oregonstate.capstone.repositories.ExperienceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,7 +24,16 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public List<Experience> getAll() {
-        return experienceRepository.findAll();
+        List<Experience> experiences = experienceRepository.findAll();
+        experiences.sort(Comparator.comparingLong(Experience::getId));
+        return experiences;
+    }
+
+    @Override
+    public List<Experience> findByUserId(Long userId) {
+        List<Experience> experiences = experienceRepository.findByUserId(userId);
+        experiences.sort(Comparator.comparingLong(Experience::getId));
+        return experiences;
     }
 
     @Override

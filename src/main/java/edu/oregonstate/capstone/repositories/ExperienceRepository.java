@@ -11,4 +11,6 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
 
     @Query(value = "SELECT e FROM Experience e WHERE fts(:keyword, :keyword, :keyword, :keyword, :keyword) = true")
     List<Experience> findByKeyword(@Param("keyword") String keyword);
+
+    List<Experience> findByUserId(Long userId);
 }

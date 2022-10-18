@@ -1,6 +1,7 @@
 package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Formula;
 
@@ -30,13 +31,16 @@ public class Experience {
     @ManyToOne
     private User user;
 
-    @ApiModelProperty(hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Transient
     private String username;
 
-    @ApiModelProperty(hidden = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Formula("(select coalesce(avg(r.star_count), 0.0) from t_rating r where r.experience_id = id)")
     private double averageRating;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String imageUrl;
 
     public Long getId() {
         return id;
@@ -85,7 +89,7 @@ public class Experience {
     public void setCountry(String country) {
         this.country = country;
     }
-    
+
     public User getUser() {
         return user;
     }
@@ -108,5 +112,13 @@ public class Experience {
 
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
