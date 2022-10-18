@@ -1,5 +1,6 @@
 package edu.oregonstate.capstone.controllers;
 
+import edu.oregonstate.capstone.aws.AmazonClient;
 import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
@@ -10,13 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class ExperienceController {
-    
+
     @Autowired
     ExperienceService experienceService;
 
@@ -25,6 +27,9 @@ public class ExperienceController {
 
     @Autowired
     RatingService ratingService;
+
+    @Autowired
+    AmazonClient amazonClient;
 
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
@@ -43,6 +48,14 @@ public class ExperienceController {
     public ResponseEntity<List<Experience>> getAll() {
 
         List<Experience> experiences = experienceService.getAll();
+        return new ResponseEntity<>(experiences, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get experiences by user")
+    @GetMapping("/users/{userId}/experiences")
+    public ResponseEntity<List<Experience>> getAllForUser(@PathVariable("userId") Long userId) {
+
+        List<Experience> experiences = experienceService.findByUserId(userId);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
@@ -96,5 +109,26 @@ public class ExperienceController {
     public String delete(@PathVariable("id") Long id) {
         experienceService.delete(id);
         return "deleted";
+    }
+
+    @ApiOperation(value = "Upload an experience image", notes = "Content-Type: multipart/form-data")
+    @PostMapping("/experiences/{id}/image")
+    public ResponseEntity<String> uploadImage(@PathVariable("id") Long id,
+                                              @RequestPart(value = "file") MultipartFile multipartFile) {
+
+        try {
+            String imageUrl = this.amazonClient.uploadFile(multipartFile, id);
+            updateImageUrl(imageUrl, id);
+            return new ResponseEntity<>("image uploaded: " + imageUrl, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void updateImageUrl(String url, Long id) {
+        Experience experience = experienceService.findById(id);
+        experience.setImageUrl(url);
+        experienceService.save(experience);
     }
 }
