@@ -8,6 +8,8 @@
 
 RESTful API for [Crowd-Sourced Travel Planner](https://eecs.oregonstate.edu/capstone/submission/pages/viewSingleProject.php?id=vEoVN87FmupNY20Q) full-stack web application
 
+Corresponding front-end repo: https://github.com/shallisey/capstone-ui
+
 ---
 ## How to Run
 #### Requirements
@@ -37,3 +39,7 @@ $ docker-compose up -d
 ```
 $ docker-compose down
 ```
+
+---
+
+Note: User sign up and login endpoints require `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` values in [`docker-compose.yml`](https://github.com/mike-osu/capstone-api/blob/main/docker-compose.yml) 
