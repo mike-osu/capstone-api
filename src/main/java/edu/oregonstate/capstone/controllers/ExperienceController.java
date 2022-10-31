@@ -2,9 +2,11 @@ package edu.oregonstate.capstone.controllers;
 
 import edu.oregonstate.capstone.aws.AmazonClient;
 import edu.oregonstate.capstone.entities.Experience;
+import edu.oregonstate.capstone.entities.Trip;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
 import edu.oregonstate.capstone.services.RatingService;
+import edu.oregonstate.capstone.services.TripService;
 import edu.oregonstate.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ExperienceController {
 
     @Autowired
     RatingService ratingService;
+
+    @Autowired
+    TripService tripService;
 
     @Autowired
     AmazonClient amazonClient;
@@ -55,6 +60,11 @@ public class ExperienceController {
     @GetMapping("/users/{userId}/experiences")
     public ResponseEntity<List<Experience>> getAllForUser(@PathVariable("userId") Long userId) {
 
+        User user = userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
         List<Experience> experiences = experienceService.findByUserId(userId);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
@@ -64,6 +74,19 @@ public class ExperienceController {
     public ResponseEntity<List<Experience>> searchByKeyword(@RequestParam("keyword") String keyword) {
 
         List<Experience> experiences = experienceService.findByKeyword(keyword);
+        return new ResponseEntity<>(experiences, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get experiences for a trip")
+    @GetMapping("/trips/{tripId}/experiences")
+    public ResponseEntity<List<Experience>> getAllForTrip(@PathVariable("tripId") Long tripId) {
+
+        Trip trip = tripService.findById(tripId);
+        if (trip == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        List<Experience> experiences = experienceService.findByTripId(tripId);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 

@@ -42,6 +42,11 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
+    public List<Experience> findByTripId(Long tripId) {
+        return experienceRepository.findByTripsId(tripId);
+    }
+
+    @Override
     public Experience save(Experience experience) {
 
         return experienceRepository.save(experience);

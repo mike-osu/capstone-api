@@ -1,8 +1,10 @@
 package edu.oregonstate.capstone.bootstrap;
 
 import edu.oregonstate.capstone.entities.Experience;
+import edu.oregonstate.capstone.entities.Trip;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
+import edu.oregonstate.capstone.services.TripService;
 import edu.oregonstate.capstone.services.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,10 +14,12 @@ public class DataLoader implements CommandLineRunner {
 
     private final UserService userService;
     private final ExperienceService experienceService;
+    private final TripService tripService;
 
-    public DataLoader(UserService userService, ExperienceService experienceService) {
+    public DataLoader(UserService userService, ExperienceService experienceService, TripService tripService) {
         this.userService = userService;
         this.experienceService = experienceService;
+        this.tripService = tripService;
     }
 
     @Override
@@ -65,5 +69,14 @@ public class DataLoader implements CommandLineRunner {
         experienceService.save(exp3);
 
         System.out.println("Experiences loaded....");
+
+        Trip trip1 = new Trip();
+        trip1.setName("Trip to Hawaii");
+        trip1.setDescription("Aloha!");
+        trip1.getExperiences().add(exp3);
+        trip1.setUser(mike);
+        tripService.save(trip1);
+
+        System.out.println("Trips loaded....");
     }
 }

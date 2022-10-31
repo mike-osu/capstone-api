@@ -14,6 +14,8 @@ public interface ExperienceService {
 
     List<Experience> findByKeyword(String keyword);
 
+    List<Experience> findByTripId(Long tripId);
+
     Experience save(Experience experience);
 
     void delete(Long id);
