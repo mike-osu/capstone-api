@@ -52,4 +52,9 @@ public class TripServiceTest {
         Mockito.when(tripRepository.findById(trip.getId())).thenReturn(Optional.ofNullable(trip));
         assertEquals(tripService.findById(trip.getId()), trip);
     }
+
+    @Test
+    void save() {
+        verify(tripRepository).save(trip);
+    }
 }

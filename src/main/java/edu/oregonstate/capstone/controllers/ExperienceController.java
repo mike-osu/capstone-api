@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -39,13 +40,9 @@ public class ExperienceController {
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
-        Experience experience = experienceService.findById(id);
-
-        if (experience == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(experience, HttpStatus.OK);
+        return Optional.ofNullable(experienceService.findById(id))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "Get all experiences")
@@ -97,7 +94,7 @@ public class ExperienceController {
 
         User user = userService.findById(userId);
         if (user == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         experienceRequest.setUser(user);
@@ -113,7 +110,7 @@ public class ExperienceController {
 
         Experience experience = experienceService.findById(id);
         if (experience == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         experience.setTitle(experienceRequest.getTitle());
