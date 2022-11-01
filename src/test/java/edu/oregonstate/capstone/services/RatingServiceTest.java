@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.Assert;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 
 @ActiveProfiles("test")
@@ -49,5 +49,11 @@ public class RatingServiceTest {
     void get() {
         Rating rating = ratingService.get(100L, 50L);
         verify(ratingRepository).findByUserIdAndExperienceId(100L, 50L);
+    }
+
+    @Test
+    void deleteByExperienceId() {
+        ratingService.deleteByExperienceId(50L);
+        verify(ratingRepository).findAll();
     }
 }

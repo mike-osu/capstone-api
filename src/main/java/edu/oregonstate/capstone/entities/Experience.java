@@ -42,6 +42,13 @@ public class Experience extends BaseEntity {
     @ManyToMany(mappedBy = "experiences")
     private Set<Trip> trips= new HashSet<>();
 
+    @PreRemove
+    public void checkExpAssociationBeforeRemoval() {
+        if (!this.trips.isEmpty()) {
+            throw new RuntimeException("Can't remove an experience that is include in a trip.");
+        }
+    }
+
     public String getTitle() {
         return title;
     }

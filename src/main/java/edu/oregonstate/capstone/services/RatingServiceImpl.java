@@ -5,6 +5,8 @@ import edu.oregonstate.capstone.repositories.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class RatingServiceImpl implements RatingService {
 
@@ -24,5 +26,14 @@ public class RatingServiceImpl implements RatingService {
         }
 
         return null;
+    }
+
+    @Override
+    public void deleteByExperienceId(Long experienceId) {
+        ratingRepository.findAll().forEach(r -> {
+            if (Objects.equals(r.getExperienceId(), experienceId)) {
+                ratingRepository.delete(r);
+            }
+        });
     }
 }

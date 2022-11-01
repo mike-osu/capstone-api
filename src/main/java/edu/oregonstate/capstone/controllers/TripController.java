@@ -131,6 +131,6 @@ public class TripController {
         }
 
         tripService.delete(id);
-        return new ResponseEntity<>(id, HttpStatus.OK);
+        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
 }

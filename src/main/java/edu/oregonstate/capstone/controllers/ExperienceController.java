@@ -125,10 +125,22 @@ public class ExperienceController {
 
     @ApiOperation(value = "Delete an experience by id", notes = "http://{base_url}/experiences/1")
     @DeleteMapping("/experiences/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String delete(@PathVariable("id") Long id) {
-        experienceService.delete(id);
-        return "deleted";
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+        try {
+            Experience exp = experienceService.findById(id);
+            if (exp == null) {
+                return new ResponseEntity<>("Experience not found", HttpStatus.NOT_FOUND);
+            }
+
+            exp.checkExpAssociationBeforeRemoval();
+
+            ratingService.deleteByExperienceId(id);
+            experienceService.delete(id);
+            return new ResponseEntity<>("Experience deleted", HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @ApiOperation(value = "Upload an experience image", notes = "Content-Type: multipart/form-data")
