@@ -13,4 +13,6 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
     List<Experience> findByKeyword(@Param("keyword") String keyword);
 
     List<Experience> findByUserId(Long userId);
+
+    List<Experience> findByTripsId(Long tripId);
 }

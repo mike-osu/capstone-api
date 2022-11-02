@@ -1,6 +1,7 @@
 package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.List;
@@ -27,14 +28,32 @@ public class User {
     @JsonIgnore
     private String accessToken;
 
+    @JsonIgnore
     @OneToMany(targetEntity = Experience.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<Experience> experiences;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private int experienceCount;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = Trip.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Trip> trips;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private int tripCount;
 
     @PreRemove
     public void checkUserAssociationBeforeRemoval() {
         if (!this.experiences.isEmpty()) {
             throw new RuntimeException("Can't remove a user that has experiences.");
+        }
+
+        if (!this.trips.isEmpty()) {
+            throw new RuntimeException("Can't remove a user that has trips.");
         }
     }
 
@@ -84,5 +103,21 @@ public class User {
 
     public void setExperiences(List<Experience> experiences) {
         this.experiences = experiences;
+    }
+
+    public int getExperienceCount() {
+        return getExperiences().size();
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
+    }
+
+    public int getTripCount() {
+        return trips.size();
     }
 }

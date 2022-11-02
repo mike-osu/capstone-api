@@ -2,19 +2,15 @@ package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "t_experience")
-public class Experience {
-
-    @ApiModelProperty(hidden = true)
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Experience extends BaseEntity {
 
     private String title;
 
@@ -42,12 +38,15 @@ public class Experience {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
 
-    public Long getId() {
-        return id;
-    }
+    @JsonIgnore
+    @ManyToMany(mappedBy = "experiences")
+    private Set<Trip> trips= new HashSet<>();
 
-    public void setId(Long id) {
-        this.id = id;
+    @PreRemove
+    public void checkExpAssociationBeforeRemoval() {
+        if (!this.trips.isEmpty()) {
+            throw new RuntimeException("Can't remove an experience that is include in a trip.");
+        }
     }
 
     public String getTitle() {
@@ -120,5 +119,13 @@ public class Experience {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Set<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(Set<Trip> trips) {
+        this.trips = trips;
     }
 }

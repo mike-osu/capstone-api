@@ -7,4 +7,6 @@ public interface RatingService {
     Rating save(Rating rating);
 
     Rating get(Long userId, Long experienceId);
+
+    void deleteByExperienceId(Long experienceId);
 }

@@ -2,9 +2,11 @@ package edu.oregonstate.capstone.controllers;
 
 import edu.oregonstate.capstone.aws.AmazonClient;
 import edu.oregonstate.capstone.entities.Experience;
+import edu.oregonstate.capstone.entities.Trip;
 import edu.oregonstate.capstone.entities.User;
 import edu.oregonstate.capstone.services.ExperienceService;
 import edu.oregonstate.capstone.services.RatingService;
+import edu.oregonstate.capstone.services.TripService;
 import edu.oregonstate.capstone.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -29,18 +32,17 @@ public class ExperienceController {
     RatingService ratingService;
 
     @Autowired
+    TripService tripService;
+
+    @Autowired
     AmazonClient amazonClient;
 
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
     public ResponseEntity<Experience> get(@PathVariable("id") Long id) {
-        Experience experience = experienceService.findById(id);
-
-        if (experience == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(experience, HttpStatus.OK);
+        return Optional.ofNullable(experienceService.findById(id))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "Get all experiences")
@@ -55,6 +57,11 @@ public class ExperienceController {
     @GetMapping("/users/{userId}/experiences")
     public ResponseEntity<List<Experience>> getAllForUser(@PathVariable("userId") Long userId) {
 
+        User user = userService.findById(userId);
+        if (user == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
         List<Experience> experiences = experienceService.findByUserId(userId);
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
@@ -67,6 +74,19 @@ public class ExperienceController {
         return new ResponseEntity<>(experiences, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get experiences for a trip")
+    @GetMapping("/trips/{tripId}/experiences")
+    public ResponseEntity<List<Experience>> getAllForTrip(@PathVariable("tripId") Long tripId) {
+
+        Trip trip = tripService.findById(tripId);
+        if (trip == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        List<Experience> experiences = experienceService.findByTripId(tripId);
+        return new ResponseEntity<>(experiences, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create an experience for a user")
     @PostMapping("/users/{userId}/experiences")
     public ResponseEntity<Experience> createExperience(@PathVariable(value = "userId") Long userId,
@@ -74,7 +94,7 @@ public class ExperienceController {
 
         User user = userService.findById(userId);
         if (user == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         experienceRequest.setUser(user);
@@ -90,7 +110,7 @@ public class ExperienceController {
 
         Experience experience = experienceService.findById(id);
         if (experience == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         experience.setTitle(experienceRequest.getTitle());
@@ -105,10 +125,22 @@ public class ExperienceController {
 
     @ApiOperation(value = "Delete an experience by id", notes = "http://{base_url}/experiences/1")
     @DeleteMapping("/experiences/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String delete(@PathVariable("id") Long id) {
-        experienceService.delete(id);
-        return "deleted";
+    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+        try {
+            Experience exp = experienceService.findById(id);
+            if (exp == null) {
+                return new ResponseEntity<>("Experience not found", HttpStatus.NOT_FOUND);
+            }
+
+            exp.checkExpAssociationBeforeRemoval();
+
+            ratingService.deleteByExperienceId(id);
+            experienceService.delete(id);
+            return new ResponseEntity<>("Experience deleted", HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @ApiOperation(value = "Upload an experience image", notes = "Content-Type: multipart/form-data")
