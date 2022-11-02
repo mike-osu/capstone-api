@@ -63,7 +63,7 @@ public class TripRepositoryTest {
         assertEquals(1, actual.size());
         assertEquals("test trip", actual.get(0).getName());
 
-        actual = tripRepository.findByExperiencesId(3L);
+        actual = tripRepository.findByExperiencesId(9876543210L);
         assertEquals(0, actual.size());
     }
 }
