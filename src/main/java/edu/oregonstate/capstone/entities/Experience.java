@@ -2,6 +2,7 @@ package edu.oregonstate.capstone.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
@@ -41,6 +42,14 @@ public class Experience extends BaseEntity {
     @JsonIgnore
     @ManyToMany(mappedBy = "experiences")
     private Set<Trip> trips= new HashSet<>();
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @ColumnDefault("0")
+    private double latitude;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @ColumnDefault("0")
+    private double longitude;
 
     @PreRemove
     public void checkExpAssociationBeforeRemoval() {
@@ -127,5 +136,21 @@ public class Experience extends BaseEntity {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
