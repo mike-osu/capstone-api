@@ -31,6 +31,7 @@ public class ExperienceServiceTest {
 
     private Experience exp1;
     private Experience exp2;
+    private Experience exp3;
     private Trip trip;
 
     @BeforeEach void setUp() {
@@ -39,6 +40,7 @@ public class ExperienceServiceTest {
 
         exp1 = new Experience();
         exp2 = new Experience();
+        exp3 = new Experience();
         trip = new Trip();
         trip.getExperiences().addAll(Arrays.asList(exp1, exp2));
     }
@@ -54,5 +56,11 @@ public class ExperienceServiceTest {
         experienceRepository.saveAll(Arrays.asList(exp1, exp2));
         Mockito.when(experienceRepository.findByTripsId(trip.getId())).thenReturn(Arrays.asList(exp1, exp2));
         assertEquals(experienceService.findByTripId(trip.getId()), Arrays.asList(exp1, exp2));
+    }
+
+    @Test
+    void save() {
+        experienceService.save(exp3, false);
+        verify(experienceRepository).save(exp3);
     }
 }
