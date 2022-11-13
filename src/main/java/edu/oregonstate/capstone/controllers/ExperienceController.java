@@ -1,6 +1,6 @@
 package edu.oregonstate.capstone.controllers;
 
-import edu.oregonstate.capstone.aws.AmazonClient;
+import edu.oregonstate.capstone.aws.AmazonS3Service;
 import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.entities.Trip;
 import edu.oregonstate.capstone.entities.User;
@@ -35,7 +35,7 @@ public class ExperienceController {
     TripService tripService;
 
     @Autowired
-    AmazonClient amazonClient;
+    AmazonS3Service amazonS3Service;
 
     @ApiOperation(value = "Get an experience by id", notes = "http://{base_url}/experiences/1")
     @GetMapping("/experiences/{id}")
@@ -149,7 +149,7 @@ public class ExperienceController {
                                               @RequestPart(value = "file") MultipartFile multipartFile) {
 
         try {
-            String imageUrl = this.amazonClient.uploadFile(multipartFile, id);
+            String imageUrl = this.amazonS3Service.uploadFile(multipartFile, id);
             updateImageUrl(imageUrl, id);
             return new ResponseEntity<>("image uploaded: " + imageUrl, HttpStatus.CREATED);
         } catch (Exception e) {
