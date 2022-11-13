@@ -27,6 +27,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- SQS -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+        </dependency>
+
         <!-- PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>

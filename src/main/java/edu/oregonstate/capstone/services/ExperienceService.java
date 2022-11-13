@@ -18,5 +18,7 @@ public interface ExperienceService {
 
     Experience save(Experience experience);
 
+    Experience save(Experience experience, boolean saveCoordinates);
+
     void delete(Long id);
 }
