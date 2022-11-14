@@ -32,7 +32,6 @@ public class LambdaService {
 
         try {
             AWSLambda awsLambda = AWSLambdaClientBuilder.standard()
-                    .withCredentials(new ProfileCredentialsProvider())
                     .withRegion(Regions.US_WEST_2).build();
 
             invokeResult = awsLambda.invoke(invokeRequest);
