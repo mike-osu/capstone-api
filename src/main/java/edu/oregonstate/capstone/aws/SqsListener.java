@@ -87,19 +87,7 @@ public class SqsListener implements Runnable {
 
     //Make this singleton
     static AmazonSQS getSQSClient(){
-        ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
-        try {
-            credentialsProvider.getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException(
-                    "Cannot load the credentials from the credential profiles file. " +
-                            "Please make sure that your credentials file is at the correct " +
-                            "location , and is in valid format.",
-                    e);
-        }
-
         return AmazonSQSClientBuilder.standard()
-                .withCredentials(credentialsProvider)
                 .withRegion(Regions.US_WEST_2)
                 .build();
     }
