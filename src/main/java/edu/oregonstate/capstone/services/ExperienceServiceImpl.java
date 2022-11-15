@@ -1,5 +1,6 @@
 package edu.oregonstate.capstone.services;
 
+import edu.oregonstate.capstone.aws.LambdaService;
 import edu.oregonstate.capstone.entities.Experience;
 import edu.oregonstate.capstone.repositories.ExperienceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Autowired
     ExperienceRepository experienceRepository;
+
+    @Autowired
+    LambdaService lambdaService;
 
     @Override
     public Experience findById(Long id) {
@@ -48,8 +52,14 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public Experience save(Experience experience) {
+        Experience result = experienceRepository.save(experience);
 
-        return experienceRepository.save(experience);
+        Thread newThread = new Thread(() -> {
+            lambdaService.invoke(result);
+        });
+        newThread.start();
+
+        return result;
     }
 
     @Override

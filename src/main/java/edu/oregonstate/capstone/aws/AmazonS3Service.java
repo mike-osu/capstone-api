@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
-public class AmazonClient {
+public class AmazonS3Service {
 
     private AmazonS3 s3client;
 
