@@ -8,7 +8,11 @@
 
 RESTful API for [Crowd-Sourced Travel Planner](https://eecs.oregonstate.edu/capstone/submission/pages/viewSingleProject.php?id=vEoVN87FmupNY20Q) full-stack web application
 
-Corresponding front-end repo: https://github.com/shallisey/capstone-ui
+Front-end: https://github.com/shallisey/capstone-ui
+
+Serverless compute service: https://github.com/mike-osu/location-cloud-function
+
+<img src="content/diagram.png" />
 
 ---
 ## How to Run
