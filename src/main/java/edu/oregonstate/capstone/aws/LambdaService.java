@@ -37,13 +37,13 @@ public class LambdaService {
             invokeResult = awsLambda.invoke(invokeRequest);
 
             String ans = new String(invokeResult.getPayload().array(), StandardCharsets.UTF_8);
-            System.out.println(ans);
+            System.out.println("Lambda response: " + ans);
         } catch (ServiceException e) {
             System.out.println(e.getMessage());
         }
 
         assert invokeResult != null;
-        System.out.println(invokeResult.getStatusCode());
+        System.out.println("Lambda response status: " + invokeResult.getStatusCode());
     }
 
     private String getAddress(Experience experience) {

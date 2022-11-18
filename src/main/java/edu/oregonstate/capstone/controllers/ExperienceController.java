@@ -98,7 +98,7 @@ public class ExperienceController {
         }
 
         experienceRequest.setUser(user);
-        Experience experience = experienceService.save(experienceRequest);
+        Experience experience = experienceService.save(experienceRequest, true);
 
         return new ResponseEntity<>(experience, HttpStatus.CREATED);
     }
@@ -118,7 +118,7 @@ public class ExperienceController {
         experience.setCity(experienceRequest.getCity());
         experience.setState(experienceRequest.getState());
         experience.setCountry(experienceRequest.getCountry());
-        experienceService.save(experience);
+        experienceService.save(experience, true);
 
         return new ResponseEntity<>(experience, HttpStatus.OK);
     }

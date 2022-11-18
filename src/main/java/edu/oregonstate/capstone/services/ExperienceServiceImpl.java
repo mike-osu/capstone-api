@@ -52,7 +52,15 @@ public class ExperienceServiceImpl implements ExperienceService {
 
     @Override
     public Experience save(Experience experience) {
+        return save(experience, false);
+    }
+
+    @Override
+    public Experience save(Experience experience, boolean saveCoordinates) {
         Experience result = experienceRepository.save(experience);
+
+        if (!saveCoordinates)
+            return result;
 
         Thread newThread = new Thread(() -> {
             lambdaService.invoke(result);
