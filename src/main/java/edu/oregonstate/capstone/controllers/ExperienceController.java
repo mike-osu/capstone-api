@@ -143,6 +143,7 @@ public class ExperienceController {
         }
     }
 
+    @CrossOrigin
     @ApiOperation(value = "Upload an experience image", notes = "Content-Type: multipart/form-data")
     @PostMapping("/experiences/{id}/image")
     public ResponseEntity<String> uploadImage(@PathVariable("id") Long id,
