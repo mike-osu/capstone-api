@@ -25,25 +25,32 @@ $ git clone ...
 $ cd capstone-api
 ```
 
-2. Build and run the Java web and PostgreSQL database containers by executing this command:
+2. (Optional) In the [`docker-compose.yml`](https://github.com/mike-osu/capstone-api/blob/main/docker-compose.yml) file, for the `app` service, add values for the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables
+
+    - (User sign up and login endpoints require `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` values)
+```
+  app:
+    ...
+    environment:
+      - AWS_ACCESS_KEY_ID=xxxxx
+      - AWS_SECRET_ACCESS_KEY=xxxxx
+```
+
+3. Build and run the Java web and PostgreSQL database containers by executing this command:
 ```
 $ docker-compose up -d
 ```
 
-3.  Navigate to base URL 
+4.  Navigate to base URL 
      - http://localhost:8080
      - You should see the text "Capstone API"
      <br/>&nbsp;
 
-4. View local Swagger API documentation
+5. View local Swagger API documentation
      - http://localhost:8080/swagger-ui.html
      <br/>&nbsp;
 
-5. Stop and remove containers
+6. Stop and remove containers
 ```
 $ docker-compose down
 ```
-
----
-
-Note: User sign up and login endpoints require `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` values in [`docker-compose.yml`](https://github.com/mike-osu/capstone-api/blob/main/docker-compose.yml) 
